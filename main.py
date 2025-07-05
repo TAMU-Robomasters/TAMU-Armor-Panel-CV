@@ -5,6 +5,8 @@ import math
 
 enemy_color = 'RED' # 'BLUE' or 'RED'
 
+armor_height_ratio = 12.5/6
+
 # bind and start webcam - cameras with less FOV and more zoom are better for more consistent long-distance detection.
 camera = cv.VideoCapture(0, cv.CAP_DSHOW)
 
@@ -111,19 +113,55 @@ while True:
                         except:
                             pass
                 try:
-                    if min(scores) < 50:
+                    if min(scores) < 70:
                         minimum_score_index = scores.index(min(scores))
-                        pairs.append([box[i], box[i+1+minimum_score_index]]) 
+                        pairs.append([boxes[i], boxes[i+1+minimum_score_index]]) 
                         boxes[minimum_score_index] = None
                 except:
                     pass
             
             boxes[i] = None
                 #print(f"{score} = {angle_diff} + {misalignment_angle} + {expected_distance} + {hr}")
-    
-    print(pairs)
+
+    #                 first box              second box
+    # pairs = [[cx, cy, w, h, angle],[cx, cy, w, h, angle]]
+    for pair in pairs:
+        if (pair[0]["cx"] < pair[1]["cx"]):
+            left = pair[0]
+            right = pair[1]
+        else:
+            left = pair[1]
+            right = pair[0]
+
+        # 
+        top_left = [int(left["cx"] + left["width"]*0.5 - (left["height"] * armor_height_ratio)*0.5 * math.cos(math.radians(left["angle"]))), int((left["cy"] - ((left["height"] * armor_height_ratio)*0.5 * math.sin(math.radians(left["angle"])))))]
+        top_right = [int(right["cx"] - right["width"]*0.5 - (right["height"] * armor_height_ratio)*0.5 * math.cos(math.radians(right["angle"]))), int((right["cy"] - ((right["height"] * armor_height_ratio)*0.5 * math.sin(math.radians(right["angle"])))))]
+        bottom_left = [int(left["cx"] + left["width"]*0.5 + (left["height"] * armor_height_ratio)*0.5 * math.cos(math.radians(left["angle"]))), int((left["cy"] + ((left["height"] * armor_height_ratio)*0.5 * math.sin(math.radians(left["angle"])))))]
+        bottom_right = [int(right["cx"] - right["width"]*0.5 + (right["height"] * armor_height_ratio)*0.5 * math.cos(math.radians(right["angle"]))), int((right["cy"] + ((right["height"] * armor_height_ratio)*0.5 * math.sin(math.radians(right["angle"])))))]
+
+        points = np.array([top_left,top_right,bottom_right,bottom_left], dtype=np.int32)
+        points = points.reshape((-1,1,2))
+
+        
 
 
+        cv.polylines(frame, [points], True, (255,255,255), 2)
+
+        expected_points = np.float32([[0,0],[300,0],[300,300],[0,300]])
+
+        points = np.float32(points)
+
+        M = cv.getPerspectiveTransform(points,expected_points)
+
+        warpped = cv.warpPerspective(frame, M, (300,300))
+
+        warpped = cv.cvtColor(warpped, cv.COLOR_BGR2GRAY)
+
+        adaptive_tresh = cv.adaptiveThreshold(warpped, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 41, -6)
+        try:
+            cv.imshow("warped", adaptive_tresh)
+        except:
+            pass
 
 
 
