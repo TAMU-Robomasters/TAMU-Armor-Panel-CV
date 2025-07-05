@@ -2,14 +2,36 @@ import cv2 as cv
 import time
 import numpy as np
 import math
+import os
 
 enemy_color = 'RED' # 'BLUE' or 'RED'
 
 armor_height_ratio = 12.5/6
 
+folder_path = "TAMU-Armor-Panel-CV\\pictures"
+
+icon_list = []
+for pic in os.listdir(folder_path):
+    full_path = os.path.join(folder_path, pic)
+    picture = cv.imread(full_path)
+    gray = cv.cvtColor(picture, cv.COLOR_BGR2GRAY)
+    icon_list.append(gray)
+
+
+dist = np.load("dist.pkl", allow_pickle=True)
+cam_matrix = np.load("cameraMatrix.pkl", allow_pickle=True)
+# print(f"dist {dist}")
+# print(f"camMatrix {cam_matrix}")
+
+panel_coordinates = np.array([(-12.3/2, 12.4/2, 0),
+                              (12.3/2, 12.4/2, 0),
+                              (12.3/2, -12.4/2, 0),
+                              (-12.3/2, -12.4/2, 0)])
+
+
+
 # bind and start webcam - cameras with less FOV and more zoom are better for more consistent long-distance detection.
 camera = cv.VideoCapture(0, cv.CAP_DSHOW)
-
 # configure cam
 camera.set(cv.CAP_PROP_FRAME_WIDTH, 640)
 camera.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
@@ -46,9 +68,9 @@ while True:
 
     # thresh the correct color channel
     if (enemy_color == 'BLUE'):
-        _, thresh = cv.threshold(b, 225, 240, cv.THRESH_BINARY) # tune before match
+        _, thresh = cv.threshold(b, 215, 240, cv.THRESH_BINARY) # tune before match
     elif (enemy_color == 'RED'):
-        _, thresh = cv.threshold(r, 225, 240, cv.THRESH_BINARY) # tune before match
+        _, thresh = cv.threshold(r, 215, 240, cv.THRESH_BINARY) # tune before match
     else:
         print('invalid color')
 
@@ -75,7 +97,7 @@ while True:
         
         #print(angle-90)
 
-        if ((abs(angle-90) > 45) or (area < 150)):
+        if ((abs(angle-90) > 45)):
             continue
         else:
             box = cv.boxPoints(rect)    # Get 4 corner points of the rotated box
@@ -126,7 +148,7 @@ while True:
     #                 first box              second box
     # pairs = [[cx, cy, w, h, angle],[cx, cy, w, h, angle]]
     for pair in pairs:
-        if (pair[0]["cx"] < pair[1]["cx"]):
+        if (pair[0]["cx"] <= pair[1]["cx"]):
             left = pair[0]
             right = pair[1]
         else:
@@ -158,20 +180,43 @@ while True:
         warpped = cv.cvtColor(warpped, cv.COLOR_BGR2GRAY)
 
         adaptive_tresh = cv.adaptiveThreshold(warpped, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 41, -6)
+
+        icon_contours, _ = cv.findContours(adaptive_tresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        # find the biggest countour (c) by the area
         try:
-            cv.imshow("warped", adaptive_tresh)
+            c = max(icon_contours[2:], key = cv.contourArea)
         except:
             pass
 
+        # draw the biggest contour (c) in green
+        x,y,w,h = cv.boundingRect(c)
+        cv.rectangle(adaptive_tresh,(x,y),(x+w,y+h),(255,255,255),2)
+        cropped = adaptive_tresh[y:y+h, x:x+w]
+        resized = cv.resize(cropped, (300,300))
 
+        icon_scores = []
+        for pic in icon_list:
+            compared = cv.bitwise_xor(pic, resized)
+            icon_scores.append(int(100 * (1-(np.sum(compared == 255) / 300**2))))
+            cv.imshow("compared", compared)
+        # 0 - 1, 1 - 3, 2 - sentry
+        id = icon_scores.index(max(icon_scores))
 
-        
+        if(id == 0):
+            str_holder = "1"
+        elif(id == 1):
+            str_holder = "3"
+        else:
+            str_holder = "Sentry"
+        cv.putText(frame, str_holder, tuple(top_left), cv.FONT_HERSHEY_SIMPLEX, 3, (255,0,0), 2)
 
-
-    # except:
-    #      print('doodoo')
+        success, rvec, tvec = cv.solvePnP(panel_coordinates, points, cam_matrix, dist, flags=cv.SOLVEPNP_ITERATIVE)
+        print(np.degrees(rvec))
     
     cv.imshow('View', frame)
+
+
 
 
     end_time = time.time()
