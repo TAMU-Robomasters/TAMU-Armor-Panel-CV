@@ -2,6 +2,7 @@ import numpy as np
 import cv2 as cv
 import glob
 import pickle
+import os
 
 
 
@@ -29,11 +30,13 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 
-images = glob.glob('TAMU-Armor-Panel-CV\calibration\images\\*.png')
+path = '/home/jai/PycharmProjects/TAMU-Armor-Panel-CV/calibration/images'
+for filename in os.listdir(path):
+    full_path = os.path.join(path, filename)
+    img = cv.imread(full_path)
 
-for image in images:
+    cv.imshow('img', img)
 
-    img = cv.imread(image)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
     # Find the chess board corners

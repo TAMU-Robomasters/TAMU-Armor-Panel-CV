@@ -1,0 +1,2 @@
+ENEMY_COLOR = 'RED'
+DEBUG = True
