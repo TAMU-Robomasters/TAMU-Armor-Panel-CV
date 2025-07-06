@@ -8,7 +8,7 @@ enemy_color = 'RED' # 'BLUE' or 'RED'
 
 armor_height_ratio = 12.5/6
 
-folder_path = "TAMU-Armor-Panel-CV\\pictures"
+folder_path = "pictures"
 
 icon_list = []
 for pic in os.listdir(folder_path):

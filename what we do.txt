@@ -1,0 +1,6 @@
+1. get frame / color channels
+2. bounding boxes
+3. pairing
+4. corners
+5. icon detection
+6. PnP
