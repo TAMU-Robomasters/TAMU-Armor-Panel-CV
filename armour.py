@@ -98,14 +98,16 @@ def armour_corners(pairs, frame):
     """
     list_of_points = []
     for pair in pairs:
-        if (pair[0].cx <= pair[1].cx):
-            left = pair[0]
-            right = pair[1]
+        # Since pair is a list of two Lights objects
+        light1, light2 = pair[0], pair[1]
+        # Determine left and right lights based on x-coordinate
+        if light1.cx <= light2.cx:
+            left = light1
+            right = light2
         else:
-            left = pair[1]
-            right = pair[0]
+            left = light2
+            right = light1
 
-        #
         top_left = [int(left.cx + left.w * 0.5 - (left.h * armor_height_ratio) * 0.5 * math.cos(
             math.radians(left.angle))), int((left.cy - (
                     (left.h * armor_height_ratio) * 0.5 * math.sin(math.radians(left.angle)))))]
@@ -128,4 +130,3 @@ def armour_corners(pairs, frame):
         
         list_of_points.append(points)
     return list_of_points
-        
