@@ -8,7 +8,7 @@ enemy_color = 'RED' # 'BLUE' or 'RED'
 
 armor_height_ratio = 12.5/6
 
-folder_path = "icons"
+folder_path = "TAMU-Armor-Panel-CV\\icons"
 
 icon_list = []
 for pic in os.listdir(folder_path):
@@ -18,15 +18,20 @@ for pic in os.listdir(folder_path):
     icon_list.append(gray)
 
 
-dist = np.load("calibration/dist.pkl", allow_pickle=True)
-cam_matrix = np.load("calibration/cameraMatrix.pkl", allow_pickle=True)
-# print(f"dist {dist}")
-# print(f"camMatrix {cam_matrix}")
+# camera intrinsics
+dist = np.array([(0.12047717, -0.14761262, -0.02169371, -0.01160076, 0.10168257)])
 
-panel_coordinates = np.array([(-12.3/2, 12.4/2, 0),
-                              (12.3/2, 12.4/2, 0),
-                              (12.3/2, -12.4/2, 0),
-                              (-12.3/2, -12.4/2, 0)])
+cam_matrix = np.array([(679.13732673, 0, 296.00769657),
+                        (0, 680.60272338, 202.34619921),
+                        (0, 0, 1)])
+
+# panel dimensions in cm
+panel_coordinates = np.array([
+    [-12.3/2, 12.4/2, 0],
+    [12.3/2, 12.4/2, 0],
+    [12.3/2, -12.4/2, 0],
+    [-12.3/2, -12.4/2, 0]
+], dtype=np.float32)
 
 
 

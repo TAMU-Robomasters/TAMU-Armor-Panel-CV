@@ -1,7 +1,8 @@
 import cv2 as cv
 import numpy as np
+import time
 from frame_proccesing import *
-from armour import *
+from armor import *
 from icon_detection import *
 from PnP import *
 from config import *
@@ -28,15 +29,16 @@ while True:
         print("frame capture fail")
         break
 
+    start_time = time.time()
+
     contours = frame_process(frame)
     detected_boxes = bounding_boxes(contours, frame)  # Renamed variable to avoid conflict
     if len(detected_boxes) > 1:
         try:
             pairs = pair(detected_boxes, frame)
-            corners = armour_corners(pairs, frame)
-
-            ids = icon_detection(corners, frame)
-            cords = get_cord(corners)
+            corners, centers = armour_corners(pairs, frame)
+            ids = icon_detection(corners, centers, frame)
+            cords = get_cord(corners, centers, frame)
         except Exception as e:
             print(f"Error in get_cord: {e}")
             cords = []
@@ -44,5 +46,16 @@ while True:
         cords = []
 
     if DEBUG and ret:
-        print(cords)
+        #print(cords)
+
+        # time logging
+        end_time = time.time()
+        elapsed_time = (end_time - start_time) * 1000.0
+        print(f"elapsed time: {elapsed_time:.4f} ms")
+
+
+
     cv.imshow("frame", frame)
+
+    if cv.waitKey(1) & 0xFF == ord('q'):
+        break

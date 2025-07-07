@@ -3,7 +3,8 @@ import numpy as np
 from config import DEBUG
 import math
 
-armor_height_ratio = 12.5/6
+armor_height_ratio = 12.5/5.2
+armor_width_ration = 5.5/13
 
 
 class Lights:
@@ -24,10 +25,10 @@ def bounding_boxes(contours, frame):
     b_boxes = []
     for contour in contours:
         rect = cv.minAreaRect(contour)
-        w_holder, h_holder = rect[1]
+        h_holder, w_holder = rect[1]
 
-        if w_holder > h_holder:
-            h, w = rect[1]
+        if rect[1][0] > rect[1][1]:
+            h,w = rect[1]
         else:
             w,h = rect[1]
 
@@ -37,7 +38,8 @@ def bounding_boxes(contours, frame):
         if w_holder > h_holder:
             angle += 90
 
-        if ((abs(angle-90) > 45)):
+        # filter out bad detections: true if bad
+        if ((abs(angle-90) > 45) or (area < 50)):
             continue
         else:
             if DEBUG:
@@ -71,7 +73,7 @@ def pair(b_boxes, frame):
                             misalignment_angle = abs(np.degrees((np.arctan((light1.cy - light2.cy)/ (light1.cx - light2.cx)))))
                             average_height = (light1.h + light2.h) / 2
                             distance = np.sqrt((light1.cx - light2.cx)**2 + (light1.cy - light2.cy)**2)
-                            expected_distance = abs((average_height / (5.5/13)) - distance)
+                            expected_distance = abs((average_height / armor_width_ration) - distance)
                             hr = light1.h / light2.h
 
                             score = angle_diff + misalignment_angle + expected_distance + hr
@@ -97,6 +99,7 @@ def armour_corners(pairs, frame):
     :return: list of 4 points
     """
     list_of_points = []
+    list_of_centers = []
     for pair in pairs:
         # Since pair is a list of two Lights objects
         light1, light2 = pair[0], pair[1]
@@ -124,9 +127,13 @@ def armour_corners(pairs, frame):
 
         points = np.array([top_left, top_right, bottom_right, bottom_left], dtype=np.int32)
         points = points.reshape((-1, 1, 2))
+
+        panel_center = np.array([((top_left[0]+bottom_left[0]+top_right[0]+bottom_right[0])/4), (top_left[1]+bottom_left[1]+top_right[1]+bottom_right[1])/4], dtype=np.int32)
         
         if DEBUG:
             cv.polylines(frame, [points], True, (255, 255, 255), 2)
+            cv.circle(frame, (panel_center[0],panel_center[1]), 3, (255,255,255), -1)
         
+        list_of_centers.append(panel_center) # this is stupid, will make a 'panel' class later similar to 'Lights'
         list_of_points.append(points)
-    return list_of_points
+    return list_of_points, list_of_centers
