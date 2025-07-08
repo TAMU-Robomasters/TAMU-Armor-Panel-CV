@@ -7,7 +7,7 @@ from icon_detection import *
 from PnP import *
 from config import *
 
-camera = cv.VideoCapture(0)
+camera = cv.VideoCapture(0, cv.CAP_DSHOW)
 
 # Camera Configuration
 camera.set(cv.CAP_PROP_FRAME_WIDTH, 640)
@@ -36,9 +36,9 @@ while True:
     if len(detected_boxes) > 1:
         try:
             pairs = pair(detected_boxes, frame)
-            corners, centers = armour_corners(pairs, frame)
-            ids = icon_detection(corners, centers, frame)
-            cords = get_cord(corners, centers, frame)
+            panels = armour_corners(pairs, frame)
+            ids = icon_detection(panels, frame)
+            cords = get_cord(panels, frame)
         except Exception as e:
             print(f"Error in get_cord: {e}")
             cords = []
@@ -49,13 +49,11 @@ while True:
         #print(cords)
 
         # time logging
-        end_time = time.time()
-        elapsed_time = (end_time - start_time) * 1000.0
-        print(f"elapsed time: {elapsed_time:.4f} ms")
+        cv.imshow("frame", frame)
+    end_time = time.time()
+    elapsed_time = (end_time - start_time) * 1000.0
+    print(f"elapsed time: {elapsed_time:.4f} ms")
 
-
-
-    cv.imshow("frame", frame)
 
     if cv.waitKey(1) & 0xFF == ord('q'):
         break

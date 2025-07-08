@@ -15,6 +15,14 @@ class Lights:
         self.h = h
         self.angle = angle
 
+class Panel:
+    def __init__(self, corners, center):
+        self.corners = corners
+        self.center = center
+        self.tvec = None
+        self.rvec = None
+        self.id = -1
+
 def bounding_boxes(contours, frame):
     """
     creating bounding boxes around lights
@@ -76,7 +84,8 @@ def pair(b_boxes, frame):
                             expected_distance = abs((average_height / armor_width_ration) - distance)
                             hr = light1.h / light2.h
 
-                            score = angle_diff + misalignment_angle + expected_distance + hr
+                            # score = angle_diff + misalignment_angle + expected_distance + hr
+                            score = angle_diff + misalignment_angle + hr
                             scores.append(score)
                         except:
                             pass
@@ -98,8 +107,7 @@ def armour_corners(pairs, frame):
     :param frame:
     :return: list of 4 points
     """
-    list_of_points = []
-    list_of_centers = []
+    list_of_panels = []
     for pair in pairs:
         # Since pair is a list of two Lights objects
         light1, light2 = pair[0], pair[1]
@@ -129,11 +137,12 @@ def armour_corners(pairs, frame):
         points = points.reshape((-1, 1, 2))
 
         panel_center = np.array([((top_left[0]+bottom_left[0]+top_right[0]+bottom_right[0])/4), (top_left[1]+bottom_left[1]+top_right[1]+bottom_right[1])/4], dtype=np.int32)
-        
+
+        panel = Panel(points, panel_center)
+        list_of_panels.append(panel)
+
         if DEBUG:
             cv.polylines(frame, [points], True, (255, 255, 255), 2)
-            cv.circle(frame, (panel_center[0],panel_center[1]), 3, (255,255,255), -1)
-        
-        list_of_centers.append(panel_center) # this is stupid, will make a 'panel' class later similar to 'Lights'
-        list_of_points.append(points)
-    return list_of_points, list_of_centers
+            #cv.circle(frame, (panel_center[0],panel_center[1]), 3, (255,255,255), -1)
+
+    return list_of_panels
