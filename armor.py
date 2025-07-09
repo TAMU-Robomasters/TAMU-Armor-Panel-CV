@@ -67,8 +67,8 @@ def pair(b_boxes):
     :param frame:
     :return: list of pairs of lights
     """
-    pairs = []
     print(b_boxes)
+    pairs = []
     if len(b_boxes) > 1:
         for i in range(len(b_boxes)):#have to keep
             if b_boxes[i] != None:
