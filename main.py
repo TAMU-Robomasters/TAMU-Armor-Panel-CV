@@ -8,18 +8,17 @@ from PnP import *
 from config import *
 import pyrealsense2 as rs
 
-try:
-    # Create a context object. This object owns the handles to all connected realsense devices
-    pipeline = rs.pipeline()
 
-    # Configure streams
-    config = rs.config()
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.z16, 30)
+# Create a context object. This object owns the handles to all connected realsense devices
+pipeline = rs.pipeline()
 
-    # Start streaming
-    pipeline.start(config)
-except:
-    pass
+# Configure streams
+config = rs.config()
+config.enable_stream(rs.stream.color, 640, 480, rs.format.z16, 30)
+
+# Start streaming
+pipeline.start(config)
+
 
 
 
