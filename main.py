@@ -18,10 +18,11 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 #config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 
 # Start streaming
-pipeline.start(config)
+prof = pipeline.start(config)
 
 
-
+s = prof.get_device().query_sensors()[1]
+s.set_option(rs.option.exposure, -2)
 
 #main loop
 while True:
