@@ -25,8 +25,11 @@ except:
 
 #main loop
 while True:
-    frame = pipeline.wait_for_frames()
-    print(type(frame))
+    frames = pipeline.wait_for_frames()
+
+    color_frame = frames.get_color_frame()
+
+    frame = np.asanyarray(color_frame.get_data())
 
     # if not ret:
     #     print("frame capture fail")
