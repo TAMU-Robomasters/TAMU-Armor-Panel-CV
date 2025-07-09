@@ -67,7 +67,6 @@ def pairing(b_boxes):
     :param frame:
     :return: list of pairs of lights
     """
-    print(b_boxes[0].angle)
     pairs = []
     if len(b_boxes) > 1:
         for i in range(len(b_boxes)):#have to keep
