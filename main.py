@@ -6,28 +6,30 @@ from armor import *
 from icon_detection import *
 from PnP import *
 from config import *
+import pyrealsense2 as rs
 
-camera = cv.VideoCapture(1)
+try:
+    # Create a context object. This object owns the handles to all connected realsense devices
+    pipeline = rs.pipeline()
 
-# Camera Configuration
-camera.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-camera.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
-camera.set(cv.CAP_PROP_AUTOFOCUS, 0)
-camera.set(cv.CAP_PROP_AUTOFOCUS, 100) # 50 ft or something idk
-camera.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25)
-camera.set(cv.CAP_PROP_EXPOSURE, -9.0) # tune before match
+    # Configure streams
+    config = rs.config()
+    config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 
-if not camera.isOpened():
-    print("camera error")
-    exit()
+    # Start streaming
+    pipeline.start(config)
+except:
+    pass
+
+
 
 #main loop
 while True:
-    ret, frame = camera.read()
+    frame = pipeline.wait_for_frames()
 
-    if not ret:
-        print("frame capture fail")
-        break
+    # if not ret:
+    #     print("frame capture fail")
+    #     break
 
     start_time = time.time()
 
