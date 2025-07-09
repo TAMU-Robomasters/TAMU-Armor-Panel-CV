@@ -46,7 +46,7 @@ while True:
         pairs = pair(detected_boxes)
         panels = []
         for pair in pairs:
-            panel = armour_corners(pairs)
+            panel = armour_corners(pair)
             icon_detection(panel, frame)
             get_cord(panel)
             panels.append(panel)
