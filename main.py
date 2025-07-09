@@ -43,6 +43,7 @@ while True:
     detected_boxes = bounding_boxes(contours, frame)  # Renamed variable to avoid conflict
     if len(detected_boxes) > 1:
         # try:
+        print(detected_boxes[0].angle)
         pairs = pair(detected_boxes)
         panels = []
         for pair in pairs:
