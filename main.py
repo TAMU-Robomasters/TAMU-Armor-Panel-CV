@@ -9,7 +9,7 @@ from config import *
 import pyrealsense2 as rs
 from draw import *
 
-
+#your mom
 # Create a context object. This object owns the handles to all connected realsense devices
 pipeline = rs.pipeline()
 
