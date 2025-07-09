@@ -26,6 +26,7 @@ except:
 #main loop
 while True:
     frame = pipeline.wait_for_frames()
+    print(type(frame))
 
     # if not ret:
     #     print("frame capture fail")
@@ -47,7 +48,7 @@ while True:
     else:
         cords = []
 
-    if DEBUG and ret:
+    if DEBUG:
         #print(cords)
 
         # time logging
