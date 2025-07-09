@@ -47,7 +47,7 @@ def bounding_boxes(contours, frame):
             angle += 90
 
         # filter out bad detections: true if bad
-        if ((abs(angle-90) > 45) or (area < 50)):
+        if ((abs(angle-90) > 45)):
             continue
         else:
             if DEBUG:
@@ -84,8 +84,8 @@ def pair(b_boxes, frame):
                             expected_distance = abs((average_height / armor_width_ration) - distance)
                             hr = light1.h / light2.h
 
-                            # score = angle_diff + misalignment_angle + expected_distance + hr
-                            score = angle_diff + misalignment_angle + hr
+                            score = angle_diff + misalignment_angle + expected_distance + hr
+                            # score = angle_diff + misalignment_angle + hr
                             scores.append(score)
                         except:
                             pass
