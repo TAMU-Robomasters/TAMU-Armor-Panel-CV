@@ -59,7 +59,7 @@ def bounding_boxes(contours, frame):
 
     return b_boxes
 
-def pair(b_boxes):
+def pairing(b_boxes):
     """
     Pairs lights together based off of score
 

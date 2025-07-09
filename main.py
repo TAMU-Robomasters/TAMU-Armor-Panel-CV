@@ -44,7 +44,7 @@ while True:
     if len(lights) > 1:
         # try:
         print(lights)
-        pairs = pair(lights)
+        pairs = pairing(lights)
         panels = []
         for pair in pairs:
             panel = armour_corners(pair)
