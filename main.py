@@ -68,5 +68,5 @@ while True:
     print(f"elapsed time: {elapsed_time:.4f} ms")
 
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    if cv.waitKey(0) & 0xFF == ord('q'):
         break
