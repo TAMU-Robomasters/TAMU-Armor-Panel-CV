@@ -13,60 +13,46 @@ for pic in os.listdir(folder_path):
     gray = cv.cvtColor(picture, cv.COLOR_BGR2GRAY)
     icon_list.append(gray)
 
-def icon_detection(list_of_panels, frame):
+def icon_detection(panel, frame):
     """
     transforms and crops out armour panels to compare to icons
     :param frame:
     :param list_of_points:
     :return: list of ids, 0 = 1 (hero), 1 = 3 (standard), 2 = sentry
     """
-    for panel in list_of_panels:
-        points = panel.corners
-        points = np.float32(points)
 
-        M = cv.getPerspectiveTransform(points, expected_points)
+    points = panel.corners
+    points = np.float32(points)
 
-        warped = cv.warpPerspective(frame, M, (300, 300))
+    M = cv.getPerspectiveTransform(points, expected_points)
 
-        warped = cv.cvtColor(warped, cv.COLOR_BGR2GRAY)
+    warped = cv.warpPerspective(frame, M, (300, 300))
 
-        adaptive_tresh = cv.adaptiveThreshold(warped, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 101, -1)
+    warped = cv.cvtColor(warped, cv.COLOR_BGR2GRAY)
 
-        icon_contours, _ = cv.findContours(adaptive_tresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    adaptive_tresh = cv.adaptiveThreshold(warped, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 101, -1)
 
-        # find the biggest countour (c) by the area
-        try:
-            c = max(icon_contours[2:], key=cv.contourArea)
-        except:
-            pass
+    icon_contours, _ = cv.findContours(adaptive_tresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-        x,y,w,h = cv.boundingRect(c)
+    # find the biggest countour (c) by the area
+    try:
+        c = max(icon_contours[2:], key=cv.contourArea)
+    except:
+        pass
 
-        icon_scores = []
-        cropped = adaptive_tresh[y:y+h, x:x+w]
-        resized = cv.resize(cropped, (300,300))
-        i = 0
-        for pic in icon_list:
-            compared = cv.bitwise_xor(pic, resized)
-            if DEBUG:
-                cv.imshow(f"icon + {i}", compared)
-            icon_scores.append(np.sum(compared < 255))
-            i += 1
-        icon_scores[2] = icon_scores[2] - 10000
-        # 0 - 1, 1 - 3, 2 - sentry
-        id = icon_scores.index(max(icon_scores))
-        panel.id = id
+    x,y,w,h = cv.boundingRect(c)
 
+    icon_scores = []
+    cropped = adaptive_tresh[y:y+h, x:x+w]
+    resized = cv.resize(cropped, (300,300))
+    i = 0
+    for pic in icon_list:
+        compared = cv.bitwise_xor(pic, resized)
         if DEBUG:
-            print(icon_scores)
-            cv.rectangle(adaptive_tresh,(x,y),(x+w,y+h),(255,255,255),2)
-            cv.imshow("cropped", resized)
-            if(id == 0):
-                str_holder = "Hero"
-            elif(id == 1):
-                str_holder = "Standard"
-            else:
-                str_holder = "Sentry"
-            for panel in list_of_panels:
-                center = panel.center
-                cv.putText(frame, str_holder, (center[0]-25, center[1]+25), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100,255,255), 1)
+            cv.imshow(f"icon + {i}", compared)
+        icon_scores.append(np.sum(compared < 255))
+        i += 1
+    icon_scores[2] = icon_scores[2] - 10000
+    # 0 - 1, 1 - 3, 2 - sentry
+    id = icon_scores.index(max(icon_scores))
+    panel.id = id

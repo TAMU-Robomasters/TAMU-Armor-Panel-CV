@@ -7,6 +7,7 @@ from icon_detection import *
 from PnP import *
 from config import *
 import pyrealsense2 as rs
+from draw import *
 
 
 # Create a context object. This object owns the handles to all connected realsense devices
@@ -42,10 +43,15 @@ while True:
     detected_boxes = bounding_boxes(contours, frame)  # Renamed variable to avoid conflict
     if len(detected_boxes) > 1:
         try:
-            pairs = pair(detected_boxes, frame)
-            panels = armour_corners(pairs, frame)
-            ids = icon_detection(panels, frame)
-            cords = get_cord(panels, frame)
+            pairs = pair(detected_boxes)
+            panels = []
+            for pair in pairs:
+                panel = armour_corners(pairs)
+                icon_detection(panel, frame)
+                get_cord(panel)
+                panels.append(panel)
+                if DEBUG:
+                   draw(frame)
         except Exception as e:
             print(f"Error in get_cord: {e}")
             cords = []
