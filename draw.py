@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 def draw(panel, frame):
-    cv.polylines(frame, [panel.points], True, (255, 255, 255), 2)
+    cv.polylines(frame, [panel.corners], True, (255, 255, 255), 2)
     if (id == 0):
         str_holder = "Hero"
     elif (id == 1):
