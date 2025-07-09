@@ -42,19 +42,19 @@ while True:
     contours = frame_process(frame)
     detected_boxes = bounding_boxes(contours, frame)  # Renamed variable to avoid conflict
     if len(detected_boxes) > 1:
-        try:
-            pairs = pair(detected_boxes)
-            panels = []
-            for pair in pairs:
-                panel = armour_corners(pair)
-                icon_detection(panel, frame)
-                get_cord(panel)
-                panels.append(panel)
-                if DEBUG:
-                   draw(panel, frame)
-        except Exception as e:
-            print(f"Error in get_cord: {e}")
-            cords = []
+        # try:
+        pairs = pair(detected_boxes)
+        panels = []
+        for pair in pairs:
+            panel = armour_corners(pair)
+            icon_detection(panel, frame)
+            get_cord(panel)
+            panels.append(panel)
+            if DEBUG:
+               draw(panel, frame)
+        # except Exception as e:
+        #     print(f"Error in get_cord: {e}")
+        #     cords = []
     else:
         cords = []
 
