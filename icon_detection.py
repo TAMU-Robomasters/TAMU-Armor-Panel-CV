@@ -48,8 +48,8 @@ def icon_detection(list_of_panels, frame):
         i = 0
         for pic in icon_list:
             compared = cv.bitwise_xor(pic, resized)
-            if DEBUG:
-                cv.imshow(f"icon + {i}", compared)
+            #if DEBUG:
+                #cv.imshow(f"icon + {i}", compared)
             icon_scores.append(np.sum(compared < 255))
             i += 1
         icon_scores[2] = icon_scores[2] - 10000
@@ -69,4 +69,4 @@ def icon_detection(list_of_panels, frame):
                 str_holder = "Sentry"
             for panel in list_of_panels:
                 center = panel.center
-                cv.putText(frame, str_holder, (center[0]-25, center[1]+25), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100,255,255), 1)
+                #cv.putText(frame, str_holder, (center[0]-25, center[1]+25), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100,255,255), 1)

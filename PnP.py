@@ -65,5 +65,5 @@ def get_cord(list_of_panels, frame):
             if DEBUG:
                 for panel in list_of_panels:
                     center = panel.center
-                    cv.putText(frame, ('pos: ' + str(int(tvec[0])) + ' ' + str(int(tvec[1])) + ' ' + str(int(tvec[2]))), (center[0]-25, center[1]+50), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100,255,255), 1)
-                    cv.putText(frame, ('yaw: ' + str(int(np.degrees(rvec[2])))), (center[0]-25, center[1]+75), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100,255,255), 1)
+                    # cv.putText(frame, ('pos: ' + str(int(tvec[0])) + ' ' + str(int(tvec[1])) + ' ' + str(int(tvec[2]))), (center[0]-25, center[1]+50), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100,255,255), 1)
+                    # cv.putText(frame, ('yaw: ' + str(int(np.degrees(rvec[2])))), (center[0]-25, center[1]+75), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100,255,255), 1)

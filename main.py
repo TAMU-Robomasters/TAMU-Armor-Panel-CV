@@ -7,7 +7,7 @@ from icon_detection import *
 from PnP import *
 from config import *
 
-camera = cv.VideoCapture(0, cv.CAP_DSHOW)
+camera = cv.VideoCapture("videos/Hero_1.mov")
 
 # Camera Configuration
 camera.set(cv.CAP_PROP_FRAME_WIDTH, 640)
@@ -20,11 +20,14 @@ camera.set(cv.CAP_PROP_EXPOSURE, -9.0) # tune before match
 if not camera.isOpened():
     print("camera error")
     exit()
-
 #main loop
 while True:
     ret, frame = camera.read()
+    height, width, _ = frame.shape
 
+    # frame = frame[height // 2:height, 0:width]
+
+    # call convertScaleAbs function
     if not ret:
         print("frame capture fail")
         break
@@ -55,5 +58,5 @@ while True:
     print(f"elapsed time: {elapsed_time:.4f} ms")
 
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    if cv.waitKey(50) & 0xFF == ord('q'):
         break

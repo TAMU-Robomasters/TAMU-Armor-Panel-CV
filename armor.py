@@ -84,8 +84,8 @@ def pair(b_boxes, frame):
                             expected_distance = abs((average_height / armor_width_ration) - distance)
                             hr = light1.h / light2.h
 
-                            # score = angle_diff + misalignment_angle + expected_distance + hr
-                            score = angle_diff + misalignment_angle + hr
+                            score = 0 * angle_diff + 2 * misalignment_angle + 1 * expected_distance + 10 * hr
+                            # score = angle_diff + misalignment_angle + hr
                             scores.append(score)
                         except:
                             pass
