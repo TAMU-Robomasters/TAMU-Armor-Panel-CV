@@ -51,7 +51,7 @@ while True:
             get_cord(panel)
             panels.append(panel)
             if DEBUG:
-               draw(frame)
+               draw(panel, frame)
         # except Exception as e:
         #     print(f"Error in get_cord: {e}")
         #     cords = []
