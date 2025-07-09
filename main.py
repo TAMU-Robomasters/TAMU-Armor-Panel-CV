@@ -43,7 +43,7 @@ while True:
     lights = bounding_boxes(contours, frame)  # Renamed variable to avoid conflict
     if len(lights) > 1:
         # try:
-        print(lights[0].angle)
+        print(lights)
         pairs = pair(lights)
         panels = []
         for pair in pairs:
