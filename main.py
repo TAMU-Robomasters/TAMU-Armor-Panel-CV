@@ -40,11 +40,11 @@ while True:
     start_time = time.time()
 
     contours = frame_process(frame)
-    b_boxes = bounding_boxes(contours, frame)  # Renamed variable to avoid conflict
-    if len(b_boxes) > 1:
+    lights = bounding_boxes(contours, frame)  # Renamed variable to avoid conflict
+    if len(lights) > 1:
         # try:
-        print(b_boxes[0].angle)
-        pairs = pair(b_boxes)
+        print(lights[0].angle)
+        pairs = pair(lights)
         panels = []
         for pair in pairs:
             panel = armour_corners(pair)
