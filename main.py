@@ -7,7 +7,7 @@ from icon_detection import *
 from PnP import *
 from config import *
 
-camera = cv.VideoCapture(1)
+camera = cv.VideoCapture(2)
 
 # Camera Configuration
 camera.set(cv.CAP_PROP_FRAME_WIDTH, 640)
