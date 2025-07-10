@@ -5,13 +5,16 @@ from config import SOURCE
 
 cap = None
 pipeline = None
+
 def video_source_init():
     """
     Will setup, webcam, realsense, or file source
     """
+    global cap, pipeline  # Declare global variables
+    
     if SOURCE == "USB_CAM":
         cap = cv.VideoCapture(0)
-    if SOURCE == "REALSENSE":
+    elif SOURCE == "REALSENSE":  # Changed if to elif for better logic flow
         pipeline = rs.pipeline()
 
         # Configure streams
@@ -30,12 +33,12 @@ def video_source_init():
 def get_frame():
     if SOURCE != "REALSENSE":
         ret, frame = cap.read()
+        cv.imshow("frame", frame)
+        if not ret:
+            return None
         return frame
     else:
         frames = pipeline.wait_for_frames()
-
         color_frame = frames.get_color_frame()
-
         frame = np.asanyarray(color_frame.get_data())
-
         return frame

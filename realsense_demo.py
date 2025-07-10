@@ -1,23 +1,18 @@
 from dataclasses import dataclass, field
-import math
-import time
 import cv2
-import numpy as np
 import numpy.typing as npt
 from typing import Tuple, Optional, List
 from threading import Lock
 from robomaster_particle_filters import fast_plate_orbit
 
-import cv2 as cv
-import numpy as np
 import time
-from frame_proccesing import *
-from armor import *
-from icon_detection import *
-from PnP import *
+from subsystems.frame_proccesing import *
+from subsystems.armor import *
+from subsystems.icon_detection import *
+from subsystems.PnP import *
 from config import *
 import pyrealsense2 as rs
-from draw import *
+from subsystems.draw import *
 
 
 ANGULAR_VELOCITY_STEP_SIZE = 2.0

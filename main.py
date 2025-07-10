@@ -1,18 +1,18 @@
 import time
-from frame_proccesing import *
-from armor import *
-from icon_detection import *
-from PnP import *
+from subsystems.frame_proccesing import *
+from subsystems.armor import *
+from subsystems.icon_detection import *
+from subsystems.PnP import *
 from config import *
-from draw import *
-from video_source import *
+from subsystems.draw import *
+from subsystems.video_source import *
 
 video_source_init()
 
 #main loop
 while True:
     frame = get_frame()
-
+    cv.imshow("frame", frame)
     start_time = time.time()
 
     contours = frame_process(frame)
