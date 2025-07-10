@@ -12,7 +12,6 @@ video_source_init()
 #main loop
 while True:
     frame = get_frame()
-    cv.imshow("frame", frame)
     start_time = time.time()
 
     contours = frame_process(frame)
@@ -23,11 +22,15 @@ while True:
             panels = []
             for pair in pairs:
                 panel = armour_corners(pair)
-                icon_detection(panel, frame)
-                get_cord(panel)
-                panels.append(panel)
-                if DEBUG:
-                   draw(panel, frame)
+                good_panel = icon_detection(panel, frame)
+                if good_panel:
+                    get_cord(panel)
+                    panels.append(panel)
+                else:
+                    pairs.remove(pair)
+            if DEBUG:
+                for panel in panels:
+                    draw(panel, frame)
         except Exception as e:
             print(f"Error in get_cord: {e}")
             cords = []
@@ -40,9 +43,9 @@ while True:
         # time logging
         cv.imshow("frame", frame)
     end_time = time.time()
-    elapsed_time = (end_time - start_time) * 1000.0
-    print(f"elapsed time: {elapsed_time:.4f} ms")
+    elapsed_time = (end_time - start_time)
+    print(f"elapsed time: {elapsed_time * 1000:.4f} ms, fps: {1 / elapsed_time:.2f}")
 
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    if cv.waitKey(70) & 0xFF == ord('q'):
         break

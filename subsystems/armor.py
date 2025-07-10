@@ -21,7 +21,7 @@ class Panel:
         self.center = center
         self.tvec = None
         self.rvec = None
-        self.id = -1
+        self.id = None
 
 def bounding_boxes(contours, frame):
     """
@@ -104,7 +104,7 @@ def pairing(b_boxes):
         (angle_diffs < 45) &  # Angle difference threshold
         (misalignment_angles < 45) &  # Misalignment threshold
         (height_ratios > 0.5) & (height_ratios < 2.0) &  # Height ratio threshold
-        (scores < 70)  # Score threshold
+        (scores < 50)  # Score threshold
     )
 
     # Set invalid pairs (same light) to infinite score

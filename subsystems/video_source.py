@@ -33,7 +33,6 @@ def video_source_init():
 def get_frame():
     if SOURCE != "REALSENSE":
         ret, frame = cap.read()
-        cv.imshow("frame", frame)
         if not ret:
             return None
         return frame

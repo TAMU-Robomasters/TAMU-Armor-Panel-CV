@@ -18,7 +18,7 @@ def frame_process(frame):
     else:
         print('invalid color')
 
-    kernel = np.ones((5,5),np.uint8)
+    kernel = np.ones((3,3),np.uint8)
     closing = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
 
     contours, _ = cv.findContours(closing, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)

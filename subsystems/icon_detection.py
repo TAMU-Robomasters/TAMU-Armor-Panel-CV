@@ -12,7 +12,6 @@ for pic in os.listdir(folder_path):
     picture = cv.imread(full_path)
     gray = cv.cvtColor(picture, cv.COLOR_BGR2GRAY)
     icon_list.append(gray)
-
 def icon_detection(panel, frame):
     """
     transforms and crops out armour panels to compare to icons
@@ -50,9 +49,13 @@ def icon_detection(panel, frame):
         compared = cv.bitwise_xor(pic, resized)
         if DEBUG:
             cv.imshow(f"icon + {i}", compared)
-        icon_scores.append(np.sum(compared < 255))
-        i += 1
-    icon_scores[2] = icon_scores[2] - 10000
+            i += 1
+        average_intensity = cv.mean(compared)[0]
+        icon_scores.append(average_intensity)
     # 0 - 1, 1 - 3, 2 - sentry
-    id = icon_scores.index(max(icon_scores))
-    panel.id = id
+    if min(icon_scores) > 35:
+        return False
+    else:
+        id = icon_scores.index(min(icon_scores))
+        panel.id = id
+        return True
