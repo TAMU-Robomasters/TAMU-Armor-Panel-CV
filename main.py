@@ -1,41 +1,17 @@
-import cv2 as cv
-import numpy as np
 import time
 from frame_proccesing import *
 from armor import *
 from icon_detection import *
 from PnP import *
 from config import *
-import pyrealsense2 as rs
 from draw import *
+from video_source import *
 
-#your mom
-# Create a context object. This object owns the handles to all connected realsense devices
-pipeline = rs.pipeline()
-
-# Configure streams
-config = rs.config()
-config.enable_stream(rs.stream.color, 1920, 1080, rs.format.bgr8, 30)
-#config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-
-# Start streaming
-prof = pipeline.start(config)
-
-
-s = prof.get_device().query_sensors()[1]
-s.set_option(rs.option.exposure, 40)
+video_source_init()
 
 #main loop
 while True:
-    frames = pipeline.wait_for_frames()
-
-    color_frame = frames.get_color_frame()
-
-    frame = np.asanyarray(color_frame.get_data())
-
-    # if not ret:
-    #     print("frame capture fail")
-    #     break
+    frame = get_frame()
 
     start_time = time.time()
 
