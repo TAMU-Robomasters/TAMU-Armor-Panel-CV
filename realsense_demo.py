@@ -230,7 +230,9 @@ while True:
     print(f"elapsed time: {elapsed_time:.4f} ms")
 
     if demo.filter is not None and demo.latest_update_time is not None:
-        demo.update_plates([panel.tvec for panel in panels])
+        plates = [panel.tvec for panel in panels]
+        if plates != []:
+            demo.update_plates(plates)
         with demo.state_lock:
             prediction = demo.update_filter()
 
