@@ -52,7 +52,7 @@ class SimulatedRobotState:
         return [to_plate(*args) for args in zip(offsets, RADIAL_OFFSETS, Z_OFFSETS)]
 
     def set_visible_plate_positions(self, plates: List[npt.NDArray[np.float64]]):
-        plates = [plate / 5.0 for plate in plates]
+        plates = [plate / 20.0 for plate in plates]
         print(plates)
         self.visible_plates = plates
 
