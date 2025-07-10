@@ -60,21 +60,25 @@ def bounding_boxes(contours, frame):
 def pairing(b_boxes):
     """
     Pairs lights together based off of similarity score using vectorized operations
-
+    
     :param b_boxes: List of light objects to be paired
     :return: list of pairs of lights
     """
-
-    #Todo ai generated, need to spend time understanding, and to test if performance is better.
     n = len(b_boxes)
     if n <= 1:
         return []
 
-    # Convert light properties to numpy arrays for vectorized operations
-    cx = np.array([light.cx for light in b_boxes])
-    cy = np.array([light.cy for light in b_boxes])
-    angles = np.array([light.angle for light in b_boxes])
-    heights = np.array([light.h for light in b_boxes])
+    # Convert light objects to structured array in one go
+    light_data = np.array([(light.cx, light.cy, light.angle, light.h) 
+                          for light in b_boxes],
+                         dtype=[('cx', 'f8'), ('cy', 'f8'), 
+                               ('angle', 'f8'), ('h', 'f8')])
+
+    # Extract arrays using structured array fields
+    cx = light_data['cx']
+    cy = light_data['cy']
+    angles = light_data['angle']
+    heights = light_data['h']
 
     # Create meshgrids for vectorized calculations
     cx1, cx2 = np.meshgrid(cx, cx)
@@ -114,7 +118,7 @@ def pairing(b_boxes):
         # Find minimum score indices
         min_idx = np.unravel_index(scores.argmin(), scores.shape)
         min_score = scores[min_idx]
-
+        
         if min_score == np.inf or not valid_mask[min_idx]:
             break
 
