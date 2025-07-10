@@ -40,8 +40,6 @@ def bounding_boxes(contours, frame):
         else:
             w,h = rect[1]
 
-        area = w*h
-
         angle = rect[2]
         if w_holder > h_holder:
             angle += 90
@@ -61,42 +59,73 @@ def bounding_boxes(contours, frame):
 
 def pairing(b_boxes):
     """
-    Pairs lights together based off of score
+    Pairs lights together based off of similarity score using vectorized operations
 
-    :param b_boxes:
-    :param frame:
+    :param b_boxes: List of light objects to be paired
     :return: list of pairs of lights
     """
-    pairs = []
-    if len(b_boxes) > 1:
-        for i in range(len(b_boxes)):#have to keep
-            if b_boxes[i] != None:
-                scores = []
-                for j in range(len(b_boxes)):
-                    if j != i and b_boxes[j] != None:
-                        try:
-                            light1 = b_boxes[i]
-                            light2 = b_boxes[j]
-                            angle_diff = abs(light1.angle - light2.angle)
-                            misalignment_angle = abs(np.degrees((np.arctan((light1.cy - light2.cy)/ (light1.cx - light2.cx)))))
-                            average_height = (light1.h + light2.h) / 2
-                            distance = np.sqrt((light1.cx - light2.cx)**2 + (light1.cy - light2.cy)**2)
-                            expected_distance = abs((average_height / armor_width_ration) - distance)
-                            hr = light1.h / light2.h
 
-                            score = angle_diff + misalignment_angle + expected_distance + hr
-                            # score = angle_diff + misalignment_angle + hr
-                            scores.append(score)
-                        except:
-                            pass
-                try:
-                    if min(scores) < 70:
-                        minimum_score_index = scores.index(min(scores))
-                        pairs.append([b_boxes[i], b_boxes[i+1+minimum_score_index]])
-                        b_boxes[minimum_score_index] = None
-                except:
-                    pass
-            b_boxes[i] = None
+    #Todo ai generated, need to spend time understanding, and to test if performance is better.
+    n = len(b_boxes)
+    if n <= 1:
+        return []
+
+    # Convert light properties to numpy arrays for vectorized operations
+    cx = np.array([light.cx for light in b_boxes])
+    cy = np.array([light.cy for light in b_boxes])
+    angles = np.array([light.angle for light in b_boxes])
+    heights = np.array([light.h for light in b_boxes])
+
+    # Create meshgrids for vectorized calculations
+    cx1, cx2 = np.meshgrid(cx, cx)
+    cy1, cy2 = np.meshgrid(cy, cy)
+    angles1, angles2 = np.meshgrid(angles, angles)
+    heights1, heights2 = np.meshgrid(heights, heights)
+
+    # Calculate all metrics at once
+    dx = cx1 - cx2
+    dy = cy1 - cy2
+    distances = np.hypot(dx, dy)
+    angle_diffs = np.abs(angles1 - angles2)
+    misalignment_angles = np.abs(np.degrees(np.arctan2(dy, dx)))
+    height_ratios = heights1 / heights2
+    avg_heights = (heights1 + heights2) / 2
+    expected_distances = np.abs((avg_heights / armor_width_ration) - distances)
+
+    # Calculate scores
+    scores = angle_diffs + misalignment_angles + expected_distances + height_ratios
+
+    # Create mask for valid pairs
+    valid_mask = (
+        (angle_diffs < 45) &  # Angle difference threshold
+        (misalignment_angles < 45) &  # Misalignment threshold
+        (height_ratios > 0.5) & (height_ratios < 2.0) &  # Height ratio threshold
+        (scores < 70)  # Score threshold
+    )
+
+    # Set invalid pairs (same light) to infinite score
+    np.fill_diagonal(scores, np.inf)
+
+    pairs = []
+    used = set()
+
+    # Get pairs in order of increasing score
+    while True:
+        # Find minimum score indices
+        min_idx = np.unravel_index(scores.argmin(), scores.shape)
+        min_score = scores[min_idx]
+
+        if min_score == np.inf or not valid_mask[min_idx]:
+            break
+
+        i, j = min_idx
+        if i not in used and j not in used:
+            pairs.append([b_boxes[i], b_boxes[j]])
+            used.add(i)
+            used.add(j)
+
+        # Mark this pair as used by setting its score to infinity
+        scores[i, j] = scores[j, i] = np.inf
 
     return pairs
 
