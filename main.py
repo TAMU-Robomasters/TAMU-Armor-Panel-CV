@@ -13,6 +13,8 @@ def main():
     if SOURCE == 'REALSENSE': # for optimization
         shape = video_source_init()
         frame = np.zeros(shape, dtype=np.uint8)
+    else:
+        video_source_init()
     #main loop
     while True:
         if SOURCE == 'REALSENSE':

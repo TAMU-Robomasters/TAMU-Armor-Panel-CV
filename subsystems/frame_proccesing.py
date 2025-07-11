@@ -9,12 +9,11 @@ def frame_process(frame):
     :param enemy_color: color of the enemy
     :return: contours
     """
-    b,_,r = cv.split(frame)
 
     if (ENEMY_COLOR == 'BLUE'):
-        _, thresh = cv.threshold(b, 215, 240, cv.THRESH_BINARY) # tune before match
+        _, thresh = cv.threshold(frame[:,:,0], 215, 240, cv.THRESH_BINARY) # tune before match
     elif (ENEMY_COLOR == 'RED'):
-        _, thresh = cv.threshold(r, 215, 240, cv.THRESH_BINARY) # tune before match
+        _, thresh = cv.threshold(frame[:,:,2], 215, 240, cv.THRESH_BINARY) # tune before match
     else:
         print('invalid color')
 
