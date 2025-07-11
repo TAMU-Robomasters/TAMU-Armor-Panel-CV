@@ -1,2 +1,5 @@
-#opencv-python==4.7.0.72
-#numpy==1.24.4
+opencv-python==4.7.0.72
+numpy==1.24.4
+pyvirtualcam
+depthai
+scalene

@@ -97,7 +97,7 @@ def pairing(b_boxes):
     expected_distances = np.abs((avg_heights / armor_width_ration) - distances)
 
     # Calculate scores
-    scores = angle_diffs + misalignment_angles + expected_distances + height_ratios
+    scores = angle_diffs + misalignment_angles + expected_distances*0.5 + height_ratios
 
     # Create mask for valid pairs
     valid_mask = (

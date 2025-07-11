@@ -53,7 +53,7 @@ def icon_detection(panel, frame):
         average_intensity = cv.mean(compared)[0]
         icon_scores.append(average_intensity)
     # 0 - 1, 1 - 3, 2 - sentry
-    if min(icon_scores) > 35:
+    if min(icon_scores) > 100:
         return False
     else:
         id = icon_scores.index(min(icon_scores))

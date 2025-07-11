@@ -10,6 +10,7 @@ from subsystems.draw import *
 from subsystems.video_source import *
 
 def main():
+    frame = None
     if SOURCE == 'REALSENSE': # for optimization
         shape = video_source_init()
         frame = np.zeros(shape, dtype=np.uint8)
@@ -53,7 +54,10 @@ def main():
             cv.imshow("frame", frame)
         end_time = time.time()
         elapsed_time = (end_time - start_time)
-        print(f"elapsed time: {elapsed_time * 1000:.4f} ms, fps: {1 / elapsed_time:.2f}")
+        try:
+            print(f"elapsed time: {elapsed_time * 1000:.4f} ms, fps: {1 / elapsed_time:.2f}")
+        except:
+            pass
 
 
         if cv.waitKey(1) & 0xFF == ord('q'):

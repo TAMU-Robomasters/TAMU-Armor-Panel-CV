@@ -1,2 +1,6 @@
 #Python bytecode files
 *.pyc
+.idea
+.venv
+.html
+.json
