@@ -12,6 +12,10 @@ for pic in os.listdir(folder_path):
     picture = cv.imread(full_path)
     gray = cv.cvtColor(picture, cv.COLOR_BGR2GRAY)
     icon_list.append(gray)
+
+# Vectorized comparison with all icons at once
+# Stack all icons into a 3D array (n_icons x height x width)
+icon_stack = np.stack(icon_list)
 def icon_detection(panel, frame):
     """
     transforms and crops out armour panels to compare to icons
@@ -37,10 +41,6 @@ def icon_detection(panel, frame):
 
         # Crop and resize in one step
         cropped = cv.resize(adaptive_thresh[y:y+h, x:x+w], (300, 300))
-
-        # Vectorized comparison with all icons at once
-        # Stack all icons into a 3D array (n_icons x height x width)
-        icon_stack = np.stack(icon_list)
 
         # Broadcast cropped image to same shape as icon_stack
         # and compute XOR for all icons simultaneously
