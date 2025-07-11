@@ -28,9 +28,9 @@ def video_source_init():
         # height = 1080
         # fps = 30
         
-        width = 640
-        height = 480
-        fps = 60
+        width = 1920
+        height = 1080
+        fps = 30
         
         config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, fps)
         # config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -95,4 +95,10 @@ def get_intrinsics() -> Tuple[npt.NDArray[np.float32]]:
         return dist, cam_matrix
     
     else:
-        raise RuntimeError("Please implement camera's get intrinsics function")
+        # raise RuntimeError("Please implement camera's get intrinsics function")
+        dist = np.array([(0.12047717, -0.14761262, -0.02169371, -0.01160076, 0.10168257)])
+
+        cam_matrix = np.array([(679.13732673, 0, 296.00769657),
+                               (0, 680.60272338, 202.34619921),
+                               (0, 0, 1)])
+        return dist, cam_matrix
