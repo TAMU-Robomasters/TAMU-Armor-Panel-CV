@@ -54,7 +54,7 @@ def icon_detection(panel, frame):
                 cv.imshow(f"icon + {i}", comp)
 
         min_score = np.min(icon_scores)
-        if min_score > 100:
+        if min_score > 75:
             return False
 
         panel.id = np.argmin(icon_scores)

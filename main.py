@@ -60,7 +60,7 @@ def main():
             pass
 
 
-        if cv.waitKey(1) & 0xFF == ord('q'):
+        if cv.waitKey(35) & 0xFF == ord('q'):
             break
     
 # # Main code has to end (i.e. break out of loop) for profiling stats to print

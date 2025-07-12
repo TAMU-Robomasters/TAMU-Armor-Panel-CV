@@ -4,12 +4,12 @@ import numpy as np
 def draw(panel, frame):
     cv.polylines(frame, [panel.corners], True, (255, 255, 255), 2)
     id = panel.id
-    if (id == 2):
-        str_holder = "Hero"
-    elif (id == 1):
-        str_holder = "Standard"
-    elif (id == 0):
+    if (id == 0 or id == 1):
         str_holder = "Sentry"
+    elif (id == 3):
+        str_holder = "hero"
+    elif (id == 2):
+        str_holder = "standard"
     else:
         str_holder = "Unknown"
     center = panel.center
