@@ -24,9 +24,9 @@ def video_source_init():
         # Configure streams
         config = rs.config()
         
-        # width = 1920
-        # height = 1080
-        # fps = 30
+        # width = 640
+        # height = 480
+        # fps = 60
         
         width = 1920
         height = 1080
@@ -42,7 +42,7 @@ def video_source_init():
         s.set_option(rs.option.exposure, 40)
         
         # for optimization
-        return (height, width, 3)
+        return ((height, width, 3), fps)
     else:
         cap = cv.VideoCapture(SOURCE)
 

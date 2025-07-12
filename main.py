@@ -12,7 +12,7 @@ from subsystems.video_source import *
 def main():
     frame = None
     if SOURCE == 'REALSENSE': # for optimization
-        shape = video_source_init()
+        shape, _ = video_source_init()
         frame = np.zeros(shape, dtype=np.uint8)
     else:
         video_source_init()
