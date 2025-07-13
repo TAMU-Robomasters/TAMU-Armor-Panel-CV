@@ -3,6 +3,8 @@ import numpy as np
 import numpy.typing as npt
 import pyrealsense2 as rs
 from typing import Tuple
+
+import config
 from config import SOURCE
 
 cap = None
@@ -59,11 +61,8 @@ def get_frame():
 # return dist coef and cam mat
 def get_intrinsics() -> Tuple[npt.NDArray[np.float32]]:  
     if SOURCE == "USB_CAM":
-        dist = np.array([(0.12047717, -0.14761262, -0.02169371, -0.01160076, 0.10168257)])
-
-        cam_matrix = np.array([(679.13732673, 0, 296.00769657),
-                        (0, 680.60272338, 202.34619921),
-                        (0, 0, 1)])
+        dist = config.dist
+        cam_matrix = config.cam_matrix
         return dist, cam_matrix
     
     elif SOURCE == "REALSENSE":
