@@ -20,6 +20,8 @@ def video_source_init():
     
     if SOURCE == "USB_CAM":
         cap = cv.VideoCapture(0)
+        #cap.set(cv.CAP_PROP_FRAME_WIDTH, 1080)
+        #cap.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
     elif SOURCE == "REALSENSE":  # Changed if to elif for better logic flow
         pipeline = rs.pipeline()
 
@@ -95,9 +97,6 @@ def get_intrinsics() -> Tuple[npt.NDArray[np.float32]]:
     
     else:
         # raise RuntimeError("Please implement camera's get intrinsics function")
-        dist = np.array([(0.12047717, -0.14761262, -0.02169371, -0.01160076, 0.10168257)])
-
-        cam_matrix = np.array([(679.13732673, 0, 296.00769657),
-                               (0, 680.60272338, 202.34619921),
-                               (0, 0, 1)])
+        dist = config.dist
+        cam_matrix = config.cam_matrix
         return dist, cam_matrix
