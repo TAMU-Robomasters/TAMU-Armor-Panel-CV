@@ -1,18 +1,18 @@
 import cv2 as cv
 import numpy as np
 
-import config
+from subsystems.video_source import get_intrinsics
 
 
 def draw(panel, frame):
     cv.polylines(frame, [panel.corners], True, (255, 255, 255), 2)
     id = panel.id
-    if (id == 0 or id == 1):
+    if (id == 0 or id == 3):
         str_holder = "Sentry"
-    elif (id == 3):
-        str_holder = "hero"
+    elif (id == 1):
+        str_holder = "Hero"
     elif (id == 2):
-        str_holder = "standard"
+        str_holder = "Standard"
     else:
         str_holder = "Unknown"
     center = panel.center
@@ -23,4 +23,5 @@ def draw(panel, frame):
     cv.putText(frame, ('rvec: ' + str(int(np.degrees(panel.rvec[0]))) + ' ' + str(int(np.degrees(panel.rvec[1]))) + ' ' + str(int(np.degrees(panel.rvec[2])))),
                (center[0] - 25, center[1] + 75),
                cv.FONT_HERSHEY_SIMPLEX, 0.5, (100, 255, 255), 1)
-    cv.drawFrameAxes(frame, config.cam_matrix, config.dist, panel.rvec, panel.tvec, 5)
+    dist, cam_matrix = get_intrinsics()
+    cv.drawFrameAxes(frame, cam_matrix, dist, panel.rvec, panel.tvec, 5)

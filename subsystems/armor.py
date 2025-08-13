@@ -1,7 +1,8 @@
 import cv2 as cv
 import numpy as np
 import math
-from config import DEBUG
+from config import DEBUG, angle_diff_multiplier
+import config
 
 armor_height_ratio = 12.5/5.2
 armor_width_ration = 5.5/13
@@ -97,14 +98,14 @@ def pairing(b_boxes):
     expected_distances = np.abs((avg_heights / armor_width_ration) - distances)
 
     # Calculate scores
-    scores = angle_diffs + 1.25 * misalignment_angles + expected_distances*0.5 + height_ratios
+    scores = angle_diffs*config.angle_diff_multiplier + misalignment_angles*config.misalignment_multiplier + expected_distances*config.expected_distance_multiplier + height_ratios*config.height_ratio_multiplier
 
     # Create mask for valid pairs
     valid_mask = (
-        (angle_diffs < 45) &  # Angle difference threshold
-        (misalignment_angles < 30) &  # Misalignment threshold
-        (height_ratios > 0.5) & (height_ratios < 2.0) &  # Height ratio threshold
-        (scores < 50)  # Score threshold
+        (angle_diffs < config.angle_diff_thresh) &  # Angle difference threshold
+        (misalignment_angles < config.misalignment_thresh) &  # Misalignment threshold
+        (height_ratios > config.height_ratio_thresh[0]) & (height_ratios < config.height_ratio_thresh[1]) &  # Height ratio threshold
+        (scores < config.score_thresh)  # Score threshold
     )
 
     # Set invalid pairs (same light) to infinite score

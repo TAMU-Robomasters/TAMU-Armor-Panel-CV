@@ -1,5 +1,7 @@
 import cv2 as cv
 import numpy as np
+
+import config
 from config import *
 
 def frame_process(frame):
@@ -11,9 +13,9 @@ def frame_process(frame):
     """
 
     if (ENEMY_COLOR == 'BLUE'):
-        _, thresh = cv.threshold(frame[:,:,0], 215, 240, cv.THRESH_BINARY) # tune before match
+        _, thresh = cv.threshold(frame[:,:,0], config.blue_thresh[0], config.blue_thresh[1], cv.THRESH_BINARY) # tune before match
     elif (ENEMY_COLOR == 'RED'):
-        _, thresh = cv.threshold(frame[:,:,2], 215, 240, cv.THRESH_BINARY) # tune before match
+        _, thresh = cv.threshold(frame[:,:,2], config.red_thresh[0], config.red_thresh[1], cv.THRESH_BINARY) # tune before match
     else:
         print('invalid color')
 

@@ -1,3 +1,6 @@
+import os
+os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+
 import time
 import cProfile
 import pstats
@@ -5,7 +8,6 @@ from subsystems.frame_proccesing import *
 from subsystems.armor import *
 from subsystems.icon_detection import *
 from subsystems.PnP import *
-from config import *
 from subsystems.draw import *
 from subsystems.video_source import *
 
@@ -51,13 +53,14 @@ def main():
             #print(cords)
 
             # time logging
+            cv.resize(frame, (640, 480))
             cv.imshow("frame", frame)
         end_time = time.time()
         elapsed_time = (end_time - start_time)
-        try:
-            print(f"elapsed time: {elapsed_time * 1000:.4f} ms, fps: {1 / elapsed_time:.2f}")
-        except:
-            pass
+        # try:
+        #     print(f"elapsed time: {elapsed_time * 1000:.4f} ms, fps: {1 / elapsed_time:.2f}")
+        # except:
+        #     pass
 
 
         if cv.waitKey(35) & 0xFF == ord('q'):

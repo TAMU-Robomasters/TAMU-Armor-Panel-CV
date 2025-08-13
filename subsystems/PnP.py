@@ -1,15 +1,23 @@
-import cv2 as cv
 import numpy as np
-import config
+import cv2 as cv
 from subsystems.video_source import get_intrinsics
 
 # camera intrinsics
 dist, cam_matrix = get_intrinsics()
 
-# panel dimensions in cm from config
-panel_coordinates = config.panel_coordinates
-hero_coordinates = config.hero_coordinates
+panel_coordinates = np.array([
+    [-12.3/2, 12.4/2, 0],
+    [12.3/2, 12.4/2, 0],
+    [12.3/2, -12.4/2, 0],
+    [-12.3/2, -12.4/2, 0]
+], dtype=np.float32)
 
+hero_coordinates = np.array([
+    [-21.8/2, 12.4/2, 0],
+    [21.8/2, 12.4/2, 0],
+    [21.8/2, -12.4/2, 0],
+    [-21.8/2, -12.4/2, 0]
+], dtype=np.float32)
 
 def get_cord(panel):
     """

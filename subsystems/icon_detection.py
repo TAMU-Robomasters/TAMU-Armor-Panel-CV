@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
-from config import DEBUG
+
+import config
 import os
 
 expected_points = np.float32([[0, 0], [300, 0], [300, 300], [0, 300]])
@@ -21,7 +22,7 @@ def icon_detection(panel, frame):
     transforms and crops out armour panels to compare to icons
     :param frame:
     :param list_of_points:
-    :return: list of ids, 0 = 1 (hero), 1 = 3 (standard), 2 = sentry
+    :return: list of ids, 0 and 3 = sentry, 1 = hero, 2 = standard
     """
     points = np.float32(panel.corners)
     M = cv.getPerspectiveTransform(points, expected_points)
@@ -29,7 +30,7 @@ def icon_detection(panel, frame):
     warped = cv.cvtColor(warped, cv.COLOR_BGR2GRAY)
 
     adaptive_thresh = cv.adaptiveThreshold(warped, 255, cv.ADAPTIVE_THRESH_MEAN_C,
-                                         cv.THRESH_BINARY, 101, -1)
+                                         cv.THRESH_BINARY, config.icon_adaptive_thresh[0], config.icon_adaptive_thresh[1])
 
     icon_contours, _ = cv.findContours(adaptive_thresh, cv.RETR_TREE,
                                      cv.CHAIN_APPROX_SIMPLE)
@@ -49,12 +50,12 @@ def icon_detection(panel, frame):
         # Compute mean intensity for all icons at once
         icon_scores = np.mean(compared, axis=(1, 2))
 
-        if DEBUG:
+        if config.SHOW_ICON_FILTERS:
             for i, comp in enumerate(compared):
                 cv.imshow(f"icon + {i}", comp)
 
         min_score = np.min(icon_scores)
-        if min_score > 75:
+        if min_score > config.icon_tolerance:
             return False
 
         panel.id = np.argmin(icon_scores)

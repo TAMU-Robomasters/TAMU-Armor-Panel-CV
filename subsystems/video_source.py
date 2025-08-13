@@ -5,48 +5,42 @@ import pyrealsense2 as rs
 from typing import Tuple
 
 import config
-from config import SOURCE
+from config import *
 
 cap = None
 pipeline = None
-
-
 
 def video_source_init():
     """
     Will setup, webcam, realsense, or file source
     """
     global cap, pipeline, realsense_frame  # Declare global variables
-    
+
     if SOURCE == "USB_CAM":
         cap = cv.VideoCapture(0)
-        #cap.set(cv.CAP_PROP_FRAME_WIDTH, 1080)
-        #cap.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
+        cap.set(cv.CAP_PROP_FRAME_WIDTH, cam_width)
+        cap.set(cv.CAP_PROP_FRAME_HEIGHT, cam_height)
+        cap.set(cv.CAP_PROP_FPS, cam_fps)
+        cap.set(cv.CAP_PROP_EXPOSURE, cam_exposure)
     elif SOURCE == "REALSENSE":  # Changed if to elif for better logic flow
         pipeline = rs.pipeline()
 
-        # Configure streams
+        # Configure cams
         config = rs.config()
         
-        # width = 640
-        # height = 480
-        # fps = 60
-        
-        width = 1920
-        height = 1080
-        fps = 30
-        
-        config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, fps)
-        # config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 
-        # Start streaming
+        
+        config.enable_cam(rs.cam.color, cam_width, cam_height, rs.format.bgr8, cam_fps)
+        # config.enable_cam(rs.cam.depth, 640, 480, rs.format.z16, 30)
+
+        # Start caming
         prof = pipeline.start(config)
 
         s = prof.get_device().query_sensors()[1]
         s.set_option(rs.option.exposure, 40)
         
         # for optimization
-        return ((height, width, 3), fps)
+        return ((cam_height, cam_width, 3), cam_fps)
     else:
         cap = cv.VideoCapture(SOURCE)
 
@@ -63,9 +57,9 @@ def get_frame():
 # return dist coef and cam mat
 def get_intrinsics() -> Tuple[npt.NDArray[np.float32]]:  
     if SOURCE == "USB_CAM":
-        dist = config.dist
-        cam_matrix = config.cam_matrix
-        return dist, cam_matrix
+        distortion_matrix = np.load('calibration\\presets\\dist.pkl', allow_pickle=True)
+        camera_matrix = np.load('calibration\\presets\\cameraMatrix.pkl', allow_pickle=True)
+        return distortion_matrix, camera_matrix
     
     elif SOURCE == "REALSENSE":
         ctx = rs.context()
@@ -80,9 +74,9 @@ def get_intrinsics() -> Tuple[npt.NDArray[np.float32]]:
             raise RuntimeError("Color sensor not found")
 
         try:
-            vsp = color_sensor.get_stream_profiles()[0].as_video_stream_profile()
+            vsp = color_sensor.get_cam_profiles()[0].as_video_cam_profile()
         except Exception as e:
-            raise RuntimeError("Video stream profile not found")
+            raise RuntimeError("Video cam profile not found")
 
         intr = vsp.get_intrinsics()
 
@@ -97,6 +91,4 @@ def get_intrinsics() -> Tuple[npt.NDArray[np.float32]]:
     
     else:
         # raise RuntimeError("Please implement camera's get intrinsics function")
-        dist = config.dist
-        cam_matrix = config.cam_matrix
-        return dist, cam_matrix
+        return config.distortion_matrix, config.cam_matrix
