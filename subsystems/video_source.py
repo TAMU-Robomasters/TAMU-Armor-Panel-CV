@@ -57,8 +57,8 @@ def get_frame():
 # return dist coef and cam mat
 def get_intrinsics() -> Tuple[npt.NDArray[np.float32]]:  
     if SOURCE == "USB_CAM":
-        distortion_matrix = np.load('calibration\\presets\\dist.pkl', allow_pickle=True)
-        camera_matrix = np.load('calibration\\presets\\cameraMatrix.pkl', allow_pickle=True)
+        distortion_matrix = np.load('calibration/presets/dist.pkl', allow_pickle=True)
+        camera_matrix = np.load('calibration/presets/cameraMatrix.pkl', allow_pickle=True)
         return distortion_matrix, camera_matrix
     
     elif SOURCE == "REALSENSE":
