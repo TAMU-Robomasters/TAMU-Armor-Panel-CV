@@ -10,9 +10,16 @@ from subsystems.icon_detection import *
 from subsystems.PnP import *
 from subsystems.draw import *
 from subsystems.video_source import *
+from subsystems.communicate import *
+
+start_time = 0
+panels = []
+
 
 def main():
     frame = None
+    global start_time
+    global panels
     if SOURCE == 'REALSENSE': # for optimization
         shape, _ = video_source_init()
         frame = np.zeros(shape, dtype=np.uint8)
@@ -62,6 +69,7 @@ def main():
         # except:
         #     pass
 
+        when_aiming_refreshes()
 
         if cv.waitKey(35) & 0xFF == ord('q'):
             break
